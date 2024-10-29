@@ -1,0 +1,365 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>BMI Analytics Dashboard</title>
+    <!-- Add Google Font -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <!-- Add Chart.js -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.7.0/chart.min.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        body {
+            background-color: #f0f2f5;
+            color: #333;
+        }
+
+        .dashboard-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+            background: white;
+            padding: 20px;
+            border-radius: 12px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.08);
+        }
+
+        .header h1 {
+            color: #2c3e50;
+            font-size: 24px;
+            font-weight: 600;
+        }
+
+        .home-button {
+            display: inline-flex;
+            align-items: center;
+            padding: 10px 20px;
+            background: linear-gradient(135deg, #6366f1, #4f46e5);
+            color: white;
+            text-decoration: none;
+            border-radius: 8px;
+            font-weight: 500;
+            transition: transform 0.2s;
+        }
+
+        .home-button:hover {
+            transform: translateY(-2px);
+        }
+
+        .stats-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .stat-card {
+            background: white;
+            padding: 25px;
+            border-radius: 12px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.08);
+            transition: transform 0.2s;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .stat-card h2 {
+            color: #2c3e50;
+            font-size: 18px;
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #e2e8f0;
+        }
+
+        .stat-value {
+            font-size: 24px;
+            font-weight: 600;
+            color: #4f46e5;
+            margin: 10px 0;
+        }
+
+        .chart-container {
+            background: white;
+            padding: 25px;
+            border-radius: 12px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.08);
+            margin-bottom: 30px;
+            height: 400px;
+        }
+
+        .chart-container h2 {
+            color: #2c3e50;
+            margin-bottom: 20px;
+        }
+
+        .history-section {
+            background: white;
+            padding: 25px;
+            border-radius: 12px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.08);
+        }
+
+        .history-section h2 {
+            color: #2c3e50;
+            margin-bottom: 20px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+
+        th, td {
+            padding: 15px;
+            text-align: left;
+            border-bottom: 1px solid #e2e8f0;
+        }
+
+        th {
+            background-color: #f8fafc;
+            font-weight: 500;
+            color: #4a5568;
+        }
+
+        tr:hover {
+            background-color: #f8fafc;
+        }
+
+        .stat-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 8px 0;
+            border-bottom: 1px solid #e2e8f0;
+        }
+
+        .stat-item:last-child {
+            border-bottom: none;
+        }
+
+        .stat-label {
+            color: #64748b;
+        }
+
+        .stat-number {
+            font-weight: 500;
+            color: #2c3e50;
+        }
+    </style>
+</head>
+<body>
+    <div class="dashboard-container">
+        <div class="header">
+            <h1>BMI Analytics Dashboard</h1>
+            <a href="/" class="home-button">🏠 Home</a>
+        </div>
+
+        <div class="stats-container">
+            <div class="stat-card">
+                <h2>Overall Statistics</h2>
+                <div id="totalRecords"></div>
+                <div id="genderStats"></div>
+            </div>
+            <div class="stat-card">
+                <h2>Average Metrics</h2>
+                <div id="avgMetrics"></div>
+            </div>
+            <div class="stat-card">
+                <h2>BMI Category Distribution</h2>
+                <div id="bmiDistribution"></div>
+            </div>
+        </div>
+
+        <div class="chart-container">
+            <h2>BMI Category Distribution Trend</h2>
+            <canvas id="trendChart"></canvas>
+        </div>
+        
+        <div class="chart-container">
+            <h2>Gender-wise Distribution</h2>
+            <canvas id="genderChart"></canvas>
+        </div>
+
+        <div class="history-section">
+            <h2>Recent BMI History</h2>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Gender</th>
+                        <th>Height (cm)</th>
+                        <th>Weight (kg)</th>
+                        <th>BMI Category</th>
+                    </tr>
+                </thead>
+                <tbody id="historyTable">
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <script>
+        // Function to format the analytics data
+        function updateDashboard(data) {
+            // Update total records
+            document.getElementById('totalRecords').innerHTML = `
+                <div class="stat-item">
+                    <span class="stat-label">Total Records</span>
+                    <span class="stat-number">${data.totalRecords}</span>
+                </div>
+            `;
+
+            // Update gender statistics
+            document.getElementById('genderStats').innerHTML = 
+                Object.entries(data.genderDistribution)
+                    .map(([gender, count]) => `
+                        <div class="stat-item">
+                            <span class="stat-label">${gender}</span>
+                            <span class="stat-number">${count}</span>
+                        </div>
+                    `).join('');
+
+            // Update average metrics
+            document.getElementById('avgMetrics').innerHTML = 
+                Object.entries(data.averageMetrics)
+                    .map(([metric, values]) => `
+                        <div class="stat-item">
+                            <span class="stat-label">${metric}</span>
+                            <div>
+                                ${Object.entries(values)
+                                    .map(([gender, value]) => `
+                                        <div class="stat-item">
+                                            <span class="stat-label">${gender}</span>
+                                            <span class="stat-number">${value}</span>
+                                        </div>
+                                    `).join('')}
+                            </div>
+                        </div>
+                    `).join('');
+
+            // Update BMI distribution
+            document.getElementById('bmiDistribution').innerHTML = 
+                Object.entries(data.indexDistribution)
+                    .map(([category, count]) => `
+                        <div class="stat-item">
+                            <span class="stat-label">${category}</span>
+                            <span class="stat-number">${count}</span>
+                        </div>
+                    `).join('');
+
+            // Create trend chart
+            const trendCtx = document.getElementById('trendChart').getContext('2d');
+            new Chart(trendCtx, {
+                type: 'line',
+                data: {
+                    labels: Object.keys(data.bmiTrends),
+                    datasets: [{
+                        label: 'Number of People',
+                        data: Object.values(data.bmiTrends),
+                        borderColor: '#4f46e5',
+                        backgroundColor: 'rgba(79, 70, 229, 0.1)',
+                        tension: 0.4,
+                        fill: true
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            position: 'top',
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true
+                        }
+                    }
+                }
+            });
+
+            // Create gender-wise chart
+            const genderCtx = document.getElementById('genderChart').getContext('2d');
+            new Chart(genderCtx, {
+                type: 'bar',
+                data: {
+                    labels: Object.keys(data.genderDistribution),
+                    datasets: [{
+                        label: 'Number of People',
+                        data: Object.values(data.genderDistribution),
+                        backgroundColor: [
+                            'rgba(79, 70, 229, 0.6)',
+                            'rgba(236, 72, 153, 0.6)'
+                        ],
+                        borderColor: [
+                            'rgba(79, 70, 229, 1)',
+                            'rgba(236, 72, 153, 1)'
+                        ],
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            position: 'top',
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true
+                        }
+                    }
+                }
+            });
+        }
+
+        // Function to update the history table
+        function updateHistoryTable(history) {
+            const bmiCategories = {
+                0: 'Extremely Weak',
+                1: 'Weak',
+                2: 'Normal',
+                3: 'Overweight',
+                4: 'Obesity',
+                5: 'Extreme Obesity'
+            };
+
+            document.getElementById('historyTable').innerHTML = history
+                .map(entry => `
+                    <tr>
+                        <td>${entry.Gender}</td>
+                        <td>${entry.Height}</td>
+                        <td>${entry.Weight}</td>
+                        <td>${bmiCategories[entry.Index]}</td>
+                    </tr>
+                `)
+                .join('');
+        }
+
+        // Fetch and update dashboard data
+        fetch('/get_analytics_data')
+            .then(response => response.json())
+            .then(data => updateDashboard(data));
+
+        // Fetch and update history table
+        fetch('/get_bmi_history')
+            .then(response => response.json())
+            .then(data => updateHistoryTable(data));
+    </script>
+</body>
+</html>

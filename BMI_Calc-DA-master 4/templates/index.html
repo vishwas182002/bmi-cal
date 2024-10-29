@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BMI Application</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/js/all.min.js"></script>
+    <style>
+        /* Global Styles */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: system-ui, -apple-system, sans-serif;
+            background: linear-gradient(135deg, #f5f7fa 0%, #e4e8eb 100%);
+            min-height: 100vh;
+        }
+
+        /* Container and Header */
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 3rem 2rem;
+            text-align: center;
+        }
+
+        .header {
+            margin-bottom: 4rem;
+            animation: fadeDown 0.8s ease-out;
+        }
+
+        h1 {
+            color: #1a365d;
+            margin-bottom: 1rem;
+            font-size: 2.8rem;
+            font-weight: 700;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .subtitle {
+            color: #4a5568;
+            font-size: 1.2rem;
+            margin-bottom: 2rem;
+        }
+
+        /* Card Styles */
+        .card-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2.5rem;
+            margin-top: 2rem;
+            animation: fadeUp 0.8s ease-out;
+        }
+
+        .card {
+            background: white;
+            padding: 2.5rem;
+            border-radius: 16px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1), 0 10px 15px rgba(0,0,0,0.1);
+            text-align: center;
+            text-decoration: none;
+            color: #333;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 4px;
+            background: linear-gradient(90deg, #2563eb, #3b82f6);
+            transform: scaleX(0);
+            transform-origin: left;
+            transition: transform 0.3s ease;
+        }
+
+        .card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 6px 12px rgba(0,0,0,0.15), 0 12px 20px rgba(0,0,0,0.1);
+        }
+
+        .card:hover::before {
+            transform: scaleX(1);
+        }
+
+        .card-icon {
+            font-size: 2.5rem;
+            margin-bottom: 1.5rem;
+            color: #2563eb;
+            opacity: 0.9;
+        }
+
+        /* Card Text */
+        .card h2 {
+            margin: 0;
+            margin-bottom: 1rem;
+            color: #2563eb;
+            font-size: 1.8rem;
+            font-weight: 600;
+        }
+
+        .card p {
+            margin: 0;
+            color: #4a5568;
+            font-size: 1.1rem;
+            line-height: 1.6;
+        }
+
+        /* Footer Styles */
+        .footer {
+            text-align: center;
+            padding: 3rem 1rem;
+            margin-top: 4rem;
+            animation: fadeUp 1s ease-out;
+            background: linear-gradient(135deg, #2563eb11 0%, #3b82f611 100%);
+            border-radius: 16px;
+        }
+
+        .footer-highlight {
+            font-size: 1.4rem;
+            font-weight: 600;
+            color: #2563eb;
+            margin-bottom: 1rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .footer-text {
+            color: #4a5568;
+            font-size: 1.1rem;
+            line-height: 1.6;
+            margin-bottom: 1.5rem;
+        }
+
+        .health-icons {
+            display: flex;
+            justify-content: center;
+            gap: 2rem;
+            margin-top: 1.5rem;
+            color: #2563eb;
+            font-size: 1.5rem;
+            opacity: 0.8;
+        }
+
+        /* Animations */
+        @keyframes fadeDown {
+            from {
+                opacity: 0;
+                transform: translateY(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes fadeUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .container {
+                padding: 2rem 1rem;
+            }
+
+            h1 {
+                font-size: 2.2rem;
+            }
+
+            .footer-highlight {
+                font-size: 1.2rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>BMI Application</h1>
+            <p class="subtitle">Track and analyze your Body Mass Index with our comprehensive tools</p>
+        </div>
+        
+        <div class="card-container">
+            <a class="card" href="/bmi_calculator">
+                <div class="card-icon">
+                    <i class="fas fa-calculator"></i>
+                </div>
+                <h2>Calculator</h2>
+                <p>Calculate your Body Mass Index</p>
+            </a>
+            <a class="card" href="/data_analytics">
+                <div class="card-icon">
+                    <i class="fas fa-chart-line"></i>
+                </div>
+                <h2>Data Analytics</h2>
+                <p>View the BMI statistics and trends</p>
+            </a>
+        </div>
+
+        <div class="footer">
+            <div class="footer-highlight">Transform Your Health Journey</div>
+            <p class="footer-text">Take the first step towards a healthier lifestyle with our powerful BMI tracking tools</p>
+            <div class="health-icons">
+                <i class="fas fa-heartbeat"></i>
+                <i class="fas fa-running"></i>
+                <i class="fas fa-apple-alt"></i>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
